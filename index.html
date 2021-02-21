@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>VAC Wiki</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.1/TweenMax.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.1/plugins/ScrollToPlugin.min.js"></script>
+	<script type="text/javascript">
+		class Main {
+  onDocumentLoaded() {
+    this.registerNavLinks();
+    window.onscroll = this.onScroll.bind(this);
+
+    this.navLinks = document.getElementsByClassName("nav-link");
+    this.navLinks[0].classList.add("active");
+    this.activeNav = this.navLinks[0];
+  }
+
+  registerNavLinks() {
+    const navBar = document.getElementById("navbar");
+    const links = navBar.getElementsByTagName("a");
+
+    for (let i = 0, len = links.length; i < len; i++) {
+      links[i].onclick = (ev) => {
+        const collapse = document.getElementById("collapse");
+
+        ev.preventDefault();
+        TweenLite.to(window, 2, {
+          scrollTo: ev.target.hash,
+          ease: Power4.easeOut
+        });
+        collapse.checked = false;
+      };
+    }
+  }
+
+  onScroll() {
+    if (!this.sections)
+      this.sections = document.getElementsByClassName("main-section");
+    if (!this.navLinks)
+      this.navLinks = document.getElementsByClassName("nav-link");
+
+    for (let i = 0, len = this.sections.length; i < len; i++) {
+      if (this.isVisible(this.sections[i])) {
+        if (this.activeNav) this.activeNav.classList.remove("active");
+        this.activeNav = this.navLinks[i];
+        this.navLinks[i].classList.add("active");
+        break;
+      }
+    }
+  }
+
+  isVisible(el) {
+    const { top, bottom } = el.getBoundingClientRect();
+    return (
+      top >= 0 &&
+      top + Math.min(bottom, window.innerHeight) / 2 <= window.innerHeight
+    );
+  }
+}
+
+const main = new Main();
+window.onload = main.onDocumentLoaded.bind(main);
+
+	</script>
+	<style type="text/css">
+
+@import url("https://fonts.googleapis.com/css?family=Open+Sans|Consolas|Ubuntu");
+body {
+  font-family: "Open Sans", sans-serif;
+  color: #4a4a4a;
+}
+
+a {
+  color: #690;
+  text-decoration-style: dotted;
+}
+a:visited {
+  color: #446600;
+}
+
+code:not([class*=language-]),
+pre:not([class*=language-]) {
+  color: #905;
+  font-family: Consolas, Monaco, "Andale Mono", monospace;
+  overflow: auto;
+}
+
+pre {
+  max-height: 500px;
+}
+
+#container {
+  display: flex;
+}
+
+#navbar {
+  position: fixed;
+  height: 100vh;
+}
+#navbar a {
+  padding: 20px 20px;
+  box-sizing: border-box;
+  color: #67615b;
+  font-weight: lighter;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  align-self: stretch;
+}
+#navbar a.active {
+  margin: -2px 0;
+  color: #827b73;
+  border-style: solid;
+  border-width: 2px 0;
+  border-color: #e8e8e8;
+  box-shadow: inset 0 0 50px #f3f3f3;
+}
+
+#logo {
+  width: 50px;
+  padding: 20px;
+}
+
+#collapse {
+  display: none;
+}
+
+.collapse-label {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 32px 10px;
+  border-radius: 0 0 6px;
+  cursor: pointer;
+  transition: all 0.25s ease-out;
+}
+.collapse-label i {
+  background: #67615b;
+  display: block;
+  border-radius: 3px;
+  height: 3px;
+  width: 25px;
+  margin-bottom: 5px;
+  transition: all 0.25s ease-in-out;
+}
+.collapse-label i:last-of-type {
+  margin-bottom: 0;
+}
+
+.collapsible {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 165px;
+  overflow: hidden;
+  background: white;
+  border-right: 1px solid #e8e8e8;
+  box-shadow: 11px 0px 20px #65656511;
+  transition: max-height 0.25s ease-in-out;
+}
+
+#collapse:checked ~ .collapsible {
+  max-height: 100%;
+}
+#collapse:checked ~ .collapse-label i:first-child {
+  transform: translatey(8px) rotatez(225deg);
+}
+#collapse:checked ~ .collapse-label i:nth-of-type(2) {
+  background: #ffffff00;
+}
+#collapse:checked ~ .collapse-label i:last-child {
+  transform: translatey(-8px) rotatez(-225deg);
+}
+
+#main-doc {
+  display: flex;
+  flex-direction: column;
+  margin-left: 165px;
+}
+#main-doc h1 {
+  margin: 0.83em 50px 0 50px;
+  text-align: center;
+  padding-bottom: 0.83em;
+  margin-bottom: 0;
+  border-bottom: 2px solid #e6e6e6;
+}
+
+.main-section {
+  margin: 0 50px;
+  padding-bottom: 50px;
+}
+.main-section:not(:last-of-type) {
+  border-bottom: 2px solid #e6e6e6;
+}
+.main-section header,
+.main-section h2,
+.main-section h3 {
+  font-family: "Ubuntu", "sans-serif";
+}
+.main-section header,
+.main-section h2 {
+  margin: 2.3em 0;
+  font-size: 1.6em;
+}
+.main-section ul li {
+  margin-bottom: 20px;
+  list-style-type: square;
+}
+
+.grid {
+  display: grid;
+  grid-gap: 5px 25px;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  grid-auto-rows: minmax(150px, 1fr);
+  align-items: center;
+  margin: 30px -50px;
+  padding: 20px;
+  background: #efefef;
+  box-shadow: inset 0 0 120px 0px #f7f7f7;
+}
+
+.item {
+  text-align: center;
+  color: #07a;
+}
+.item h3 {
+  color: #690;
+  font-family: "Ubuntu", "sans-serif";
+  font-size: 18px;
+}
+.item svg {
+  width: 180px;
+}
+
+@media (max-width: 480px) {
+  .collapse-label {
+    display: block;
+    z-index: 2;
+  }
+
+  .collapsible {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    right: 0;
+    max-height: 0;
+  }
+
+  #main-doc {
+    margin: 0;
+  }
+
+  .main-section p {
+    text-align: justify;
+  }
+}
+
+	</style>
+</head>
+<body>
+
+	<nav id='navbar'>
+	  <input type='checkbox' id='collapse'></input>
+	  <label for='collapse' class='collapse-label'><i></i><i></i><i></i></label>
+	  <div class='collapsible'>
+	  	<br>
+	    <header style = "text-decoration-line: underline;">
+	      VAC Teacher Wiki
+	    </header>
+	    <br>
+	    <a class='nav-link' href='#Class_Format'>Class Format</a>
+	    <a class='nav-link' href='#Accessing_App'>Accessing App</a>
+	    <a class='nav-link' href='#Day_1'>Day 1</a>
+	    <a class='nav-link' href='#Day_2'>Day 2</a>
+	    <a class='nav-link' href='#Day_3'>Day 3</a>
+	    <a class='nav-link' href='#Day_4'>Day 4</a>
+	    <a class='nav-link' href='#Day_5'>Day 5</a>
+	    
+	  </div>
+	</nav>
+
+	<main id='main-doc'>
+
+	  <section class='main-section' id='Class_Format'>
+	  	<header>Class Format</header>
+	  	<p>
+    <meta charset="utf-8">
+</p>
+<ol>
+    <li><strong>(5 minutes before class):&nbsp;</strong>Start your Zoom session early, as many students arrive before class begins. Begin playing <a class="ql-link" data-slab-linktype="text" href="https://www.youtube.com/watch?v=FKl2uwd4DOE" rel="noopener noreferrer" target="_blank">music&nbsp;</a>and share audio on Zoom. Enable multiple screen share.</li>
+    <li><strong>(First 5 minutes of class):&nbsp;</strong>Briefly check in with students on their week. Play our jumping-jack game, where you start by stating a prompt (&apos;Do 3 jumping jacks if you&apos;ve been to Indiana, for example). Everyone who fits the prompt does 3 jumping jacks. You nominate the next person to state a prompt.</li>
+    <li><strong>(50 minutes):&nbsp;</strong>Class content</li>
+    <li><strong>(When class ends):&nbsp;</strong>Pass out the link to the <a class="ql-link" data-slab-linktype="text" href="https://docs.google.com/forms/d/1IItMzuLu0v4DbtSLIkoFr8d9fknwKiwi-7IYEjptDs0/" rel="noopener noreferrer" target="_blank">student feedback survey.</a> You can see <a class="ql-link" data-slab-linktype="text" href="https://docs.google.com/spreadsheets/d/1Xk87ahQwrJ6xTYdov0LdI-u3Gs0wK_4Mep0YuaHuSeo/edit#gid=191559204" rel="noopener noreferrer" target="_blank">the results here</a>, in the student daily survey sheet.</li>
+    <li><strong>(After class):&nbsp;</strong>Send parents a post class email (shouldn&apos;t take more than a few minutes). <a class="ql-link" data-slab-linktype="text" href="https://graceful-purple-elk.slab.com/posts/post-class-email-templates-3joauon3" rel="noopener noreferrer">Use these templates.</a></li>
+</ol>
+	  	
+	  </section>
+
+	   <section class='main-section' id='Accessing_App'>
+	  	<header>Accessing the VAC App</header>
+	  	<p>
+    <meta charset="utf-8">
+</p>
+<p>While the VAC app is available on the iOS app store, it is also available as a progressive web app.</p>
+<p><br></p>
+<p><strong>iOS</strong></p>
+<ol>
+    <li><a class="ql-link" data-slab-linktype="text" href="https://calm-chamber-06785.herokuapp.com/?app_name=VACApp&full=true" rel="noopener noreferrer" target="_blank">Open this url on your phone</a>, in Safari.</li>
+    <li>In the bottom bar in Safari, click the add button. It looks like a box with an arrow pointing upwards out of it.</li>
+    <li>Scroll down and select Add To Home Screen.</li>
+    <li>Enter a name for the app and click Add.</li>
+    <li>That&apos;s it!</li>
+</ol>
+<p><strong>Android</strong></p>
+<ol>
+    <li>Launch &ldquo;Chrome&rdquo; app.</li>
+    <li>Open the website or web <strong>page</strong> you want to pin to your <strong>home screen</strong>.</li>
+    <li>Tap the menu icon (3 dots in upper right-hand corner) and tap <strong>Add to homescreen</strong>.</li>
+    <li>You&apos;ll be able to enter a name for the shortcut and then Chrome will <strong>add</strong> it to your <strong>home screen</strong>.</li>
+    <li>That&apos;s it!</li>
+</ol>
+<p><strong>How to use the app</strong></p>
+<ol>
+    <li>Type the name of an AppBuilder project into the app. Click Load.</li>
+</ol>
+<p><br></p>
+	  	
+	  </section>
+
+	  <section class='main-section' id='Day_1'>
+
+	    <header>Day 1</header>
+
+	    <p>
+    <meta charset="utf-8">
+</p>
+<ol>
+    <li>HTML introduction <strong>(in the Coding Languages section, 20 minutes)</strong>
+        <ol>
+            <li>Ask students what code is<ol>
+                    <li>What languages have they heard of or even used</li>
+                </ol>
+            </li>
+            <li>Demonstrate how to create html buttons and text, have students follow along</li>
+            <li>Demonstrate adding inline styling, starting with background-color and color</li>
+            <li>List elements for students (p, input, button). Have students spend five minutes creating a simple &ldquo;website&rdquo; about themselves, then do some show-and-tell.</li>
+        </ol>
+    </li>
+    <li>Activity: inspecting HTML on Wikipedia <strong>(in the Practice Activities Section, 5 minutes)</strong>
+        <ol>
+            <li>Have students change the word &ldquo;English&rdquo; using Chrome Developer Tools</li>
+            <li>Ask students to guess what will happen if they refresh: will the change revert or remain? Why or why not?</li>
+        </ol>
+    </li>
+    <li><strong>Brief Lecture: Client, server database (Practice Activities section, 5 minutes)</strong>
+        <ol>
+            <li>Show students the internet architecture image and have them guess what a server is</li>
+            <li>Explain what a server is and what role it plays in enabling the Internet</li>
+        </ol>
+    </li>
+    <li><strong>Activity: Pizza shop website (Practice Activities section 20 minutes)</strong></li>
+    <li><strong>Activity: Make your website live (Practice Activities section, 5 minutes)</strong>
+        <ol>
+            <li>Have students inspect the html for their new websites, and verify that its the HTML they created</li>
+            <li>Bring the lesson full circle by helping students understand that we put their HTML on our server</li>
+        </ol>
+    </li>
+</ol>
+	  </section>
+
+	  <section class='main-section' id='Day_2'>
+	  	<header>Day 2</header>
+	  	<p>
+    <meta charset="utf-8">
+</p>
+<ul>
+    <li>Finish Day 1 curriculum (if you haven&rsquo;t); otherwise, invite a student to recap what was learned on Day 1 <strong>(5 minutes)</strong></li>
+    <li>Introduce students to Javascript <strong>(Javascript editor in the Coding Dropdown)</strong> <strong>(15-20 minutes)</strong>
+        <ul>
+            <li>Why Javascript vs HTML (JS is a scripting language)</li>
+            <li>Show students how to define a variable that holds an integer value</li>
+            <li>Javascript commands (Tell students that all commands require parantheses at the end)<ul>
+                    <li>Console.log</li>
+                    <li>Alert</li>
+                </ul>
+            </li>
+            <li>Using math operators (can use logging 2 variables added together as an example)</li>
+            <li>Demonstrate to students that they can redefine a variable using its own value (e.g. x = x + 5)</li>
+            <li>Practice Game (Have all students define their own variables, that together should sum to 50)</li>
+            <li>Introduce strings, explain to students why and when they need quotes in JS<ul>
+                    <li>Make sure students understand that we need quotes because without them any random set of English characters would be interpreted as a variable</li>
+                </ul>
+            </li>
+            <li>Demonstrate concatenating strings</li>
+            <li>If there&rsquo;s time, play a String version of the Practice Game</li>
+        </ul>
+    </li>
+    <li>Combining JS and HTML<strong>&nbsp;(In HTML editor) (10 minutes)</strong>
+        <ul>
+            <li>Have students create a button and add an inline onclick function, that alerts a number</li>
+        </ul>
+    </li>
+    <li>Intro to AppBuilder <strong>(AppBuilder) (Remainder of time)</strong>
+        <ul>
+            <li>Have all students switch over to AppBuilder</li>
+            <li>With your screen shared, walk students through using use the Direct Code Edit feature to create a button that alerts their name, just like they did in the JS editor</li>
+            <li>Once complete, show students how to move their button using the GUI</li>
+            <li>Have students add a style to their button</li>
+            <li>Show students that they can see the list of elements available in AppBuilder by clicking the See Elements button</li>
+            <li>Demonstrate how to define a variable with JS in the Edit Code Directly tool</li>
+            <li>Have students create a button that alerts the value of a variable that they defined, just like they did in the HTML set earlier</li>
+            <li>Have students modify their onclick so that 1) it includes multiple lines of JS, and 2)&nbsp;increments the number that&apos;s going to be alerted every time</li>
+            <li>Explain Pair Programming and why it is used at tech companies</li>
+            <li>Show students the &ldquo;Challenges&rdquo; button. Explain that in each challenge, their goal is to create the app depicted in the video.</li>
+            <li>Split students up into pairs and have them attempt Challenges 1-6 for the remainder of the session</li>
+            <li>At the end of class, tell students they can attempt the remainder of the challenges for fun over the next week (not homework, per se, but&hellip;)</li>
+        </ul>
+    </li>
+</ul>
+	  </section>
+
+	   <section class='main-section' id='Day_3'>
+	   	<header>Day 3</header>
+	   	<p>
+		    <meta charset="utf-8">
+		</p>
+		<ul>
+		    <li>Remind students of some basic functionality of AppBuilder <strong>(5 minutes)</strong></li>
+		    <li>Split students up into pairs and have them continue with the challenges in breakout rooms <strong>(35 minutes)</strong>
+		        <ul>
+		            <li>The more advanced levels will introduce students to if statements, arrays, and objects. Be prepared to explain these concepts to students as you rotate between breakout rooms, giving feedback.</li>
+		            <li>Make sure to encourage students as they go through the challenges!</li>
+		        </ul>
+		    </li>
+		    <li>Student project: calculator or grocery list<strong>&nbsp;(25 minutes)</strong>
+		        <ul>
+		            <li>Bring all students together and tell them you&apos;re going to start on a pair project. They have 20 minutes to build either a calculator app or a grocery list app. If they make a grocery list app, the requirements are that users be able to view a grocery list and add items to it. If they make a calculator app, people need to be able to complete simple calculations.</li>
+		            <li>After twenty minutes, call students together for show and tell.</li>
+		        </ul>
+		    </li>
+		    <li>Let students know that next class you will begin working on your app project. Show students the list of nonprofit projects (this is under the Projects Dropdown). Tell them that for homework, they should go through the list of nonprofit projects and select one they want to work on.</li>
+		    <li>Show the students the Roles Choice image, under the App Dropdown. Briefly explain what each role entails. Ask students to think about what role they&apos;d prefer this week.</li>
+		</ul>
+	  </section>
+
+
+ 		<section class='main-section' id='Day_4'>
+ 			<header>Day 4</header>
+ 			<p>
+    <meta charset="utf-8">
+</p>
+<ul>
+    <li>NOTE: For many classes, it makes sense to spend Day 4 on AppBuilder challenges, and on strengthening students&apos; understanding of JS and data structures. Feel free to do that if you think your class will enjoy it! You can then implement this day 4 curriculum on day 5.</li>
+    <li>Let students know that, today, they&apos;ve reached a point where they know a lot of code, and they&apos;re ready to begin using their new skills for real. Let them know that you&apos;re going to talk briefly about how coding works in practice and then you&apos;re going to get started making apps.</li>
+    <li><em>Student Discussion (2 minutes): How do engineers work? (We want to help students understand what its like to work as a coder or designer)</em>
+        <ul>
+            <li>Do you think that engineers work on new projects most of the time or make improvements to existing projects most of the time? (Answer: existing projects)</li>
+            <li>Whats an example of a change you imagine an engineer at Facebook might make? (Adding a button or creating a new kind of page; it would take a long time)</li>
+        </ul>
+    </li>
+    <li><em>Student Discussion: Why are engineers (and designers) important? (2 minutes)</em>
+        <ul>
+            <li><em>Answer:&nbsp;</em>They support and maintain tools that people use every days, including tools that do important things</li>
+            <li>Follow up Q: What&rsquo;s an important piece of tech that someone in your life uses? How do you think engineers planned and designed it?</li>
+        </ul>
+    </li>
+    <li><em>Platform introduction, teacher led (8 minutes):</em>
+        <ul>
+            <li>*NOTE* The video at the end of this article summarizes this walkthrough. It might make sense to check that out and then return to read the instructions here.</li>
+            <li>Remind students they&apos;re going to start coding for real. Sharing your screen, have students follow along with you as you explain how to use our platform to find a nonprofit project, see the wireframe (including task list) for the project, and start working on it in AppBuilder<ul>
+                    <li>Show students the nonprofits list. Let students know that our company supports lots of nonprofits with good missions. <strong>Make it clear that these are real companies.&nbsp;</strong>Show students how to use the state filter to filter geographically.</li>
+                    <li>Demonstrate to students that each project has the App and Wireframe linked. Let students know that the nonprofits sent in the information provided in the platform describing the app they want.</li>
+                    <li>Open the wireframe for a nonprofit . Explain to students what a wireframe is. Show them the task list for a nonprofit and explain that the task list shows everyone who&apos;s done work on an app, in addition to showing what remains to be done.</li>
+                    <li>Open the app project for a nonprofit, from the nonprofit list. <strong>Show students the Contribute pane.</strong> Show students that they can have the wireframe open while they code, making it easy to ensure that they are on track. Show students that they can click the <em>Test WebApp</em> button in the upper right to see a full page version of the app they&apos;re working on.</li>
+                    <li>Demonstrate for students that we are working on real apps, by showing them that the changes you make are reflected on your phone. You can do this with the VACApp. Getting the VACApp takes (literally) two minutes. <a class="ql-link" data-slab-linktype="text" href="https://graceful-purple-elk.slab.com/posts/accessing-the-vac-app-a5gwc9eg" rel="noopener noreferrer">See how to do that here.</a>
+                        <ul>
+                            <li>Once you have the VACApp, open one of the nonprofit apps on your phone. Show students that the app is on your phone by holding it up to the camera. Make a minor visual change to the app in AppBuilder, and Save. Reload the VACApp and show students that the changes have been reflected on your phone.</li>
+                        </ul>
+                    </li>
+                    <li>Take students to the group skills page. Show students that you&apos;re going to track their progress, and what skills they&apos;ve shown in their work, on this page.&nbsp;</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li><em>Student App Work (45 minutes or until 5 minutes before class ends, whichever is longer):&nbsp;</em>
+        <ul>
+            <li>Tell students its time to begin app work!</li>
+            <li>Split students up into pairs for pair programming. Tell students they&apos;re going to start coding in their pairs, doing important work by helping these real apps get further along.</li>
+            <li>Show students the group skills page and tell them you&apos;re going to start off by using html and styling, the most basic skills.</li>
+            <li>Identify three apps for students (you choose) that you&apos;d like them to work on. Tell them that once they&apos;re in their breakout rooms, each pair should go through those three apps&apos; wireframes. They should select tasks they want to work on and write their name in the task list in the wireframe for the app they choose.</li>
+            <li>Split students up into breakouts. For the rest of class, give students feedback and encouragement as they work through making their changes. Answer code questions as they come up.</li>
+        </ul>
+    </li>
+    <li>Skills Review (Last 5 minuets<ul>
+            <li>Share your screen as you go to the group skills page. Verbally review students accomplishments for the day. Mark off each students demonstrated skills by clicking on the appropriate x beneath the right skill beneath their names. Let them know they&apos;re getting better and better!</li>
+        </ul>
+    </li>
+    <li>Survey</li>
+</ul>
+<p><br></p>
+<p>Video of platform features needed for Day 4 (password is <strong><em>teacherpassword</em></strong>)</p>
+<p><a data-slab-linktype="embed" href="https://player.vimeo.com/video/509882161">https://player.vimeo.com/video/509882161</a></p>
+	  </section>
+
+	  <section class='main-section' id='Day_5'>
+	  	<header>Day 5</header>
+	  	<p>
+		    <meta charset="utf-8">
+		</p>
+		<ul>
+		    <li>Group Skills Review (5 minutes): Take students to the group skills page while you share your screen. Verbally review what students accomplished last time, tell students what they&apos;re going to focus on today. (This should be the next skills on their list).</li>
+		    <li>Student work (50 minutes): Split students up into pairs. Each pair should go to the task list for the 3 nonprofits your class is working on and choose a couple of tasks to work on. Create breakout rooms for students. Make sure students are choosing a task they can accomplish and remaining focused. Make sure students add their names to the task list in the wireframe. Head back and forth between the student&apos;s breakout rooms and give encouragement and coding help.</li>
+		    <li>Group Skills Review (5 minutes): Share your screen as you go to the Group Skills screen. Verbally review students accomplishments for the day. Check off students new skills. Recap everything they&apos;ve done so far. Show students their certificates.</li>
+		</ul>
+		<p>Video of platform features needed for Day 5 and beyond (password is <strong><em>teacherpassword</em></strong>)</p>
+		<p><a data-slab-linktype="embed" href="https://player.vimeo.com/video/509882161">https://player.vimeo.com/video/509882161</a></p>
+	  </section>
+
+
+
+</main>
+</body>
+</html>
